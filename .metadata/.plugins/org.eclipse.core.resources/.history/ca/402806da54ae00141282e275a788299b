@@ -1,0 +1,46 @@
+package com.first.fhsemit.recycle;
+
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Relay;
+
+public class Tilter {
+
+	final double forwardLim = 5;
+	final double backwardLim = 5;
+	final double straight = 5;
+	
+	Relay tilter;
+	AnalogInput tilterPot;
+	
+	public Tilter(Relay tilter, int gyroPort) {
+		this.tilter = tilter;
+		tilterPot = new AnalogInput(gyroPort);
+	}
+	
+	public boolean goToCenter(){
+		//TODO make
+		return false;
+	}
+	
+	public void move(Joystick controller){
+		if(controller.getRawAxis(2) > 0.25) reverse();
+		else if(controller.getRawAxis(3) > 0.25) forward();
+		else off();
+	}
+	
+	public void forward(){
+		if(tilterPot.getVoltage() < forwardLim)
+		tilter.set(Relay.Value.kForward);
+	}
+	
+	public void reverse(){
+		if(tilterPot.getVoltage() > backwardLim)
+		tilter.set(Relay.Value.kReverse);
+	}
+	
+	public void off(){
+		tilter.set(Relay.Value.kOff);
+	}
+
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename field &apos;autonomousMode&apos; in &apos;com.first.fhsemit.recycle.Robot&apos; to &apos;autonomousChooser&apos;&#x0D;&#x0A;- Original project: &apos;Recycle Rush&apos;&#x0D;&#x0A;- Original element: &apos;com.first.fhsemit.recycle.Robot.autonomousMode&apos;&#x0D;&#x0A;- Renamed element: &apos;com.first.fhsemit.recycle.Robot.autonomousChooser&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" delegate="false" deprecate="false" description="Rename field &apos;autonomousMode&apos;" flags="589830" getter="false" id="org.eclipse.jdt.ui.rename.field" input="/src&lt;com.first.fhsemit.recycle{Robot.java[Robot^autonomousMode" name="autonomousChooser" references="true" setter="false" stamp="1424897287576" textual="false" version="1.0"/>
+</session>

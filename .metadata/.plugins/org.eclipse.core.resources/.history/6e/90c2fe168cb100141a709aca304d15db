@@ -1,0 +1,69 @@
+package com.first.fhsemit.recycle;
+
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+public class Tilter {
+
+	final double forwardLim = 5;
+	final double backwardLim = 0;
+	final double straight = 2.5;
+	final double centerTolerance = 0.1;
+	
+	private Relay tilter;
+	private AnalogInput tilterPot;
+	
+	public Tilter(Relay tilter, AnalogInput tilterPot) {
+		this.tilter = tilter;
+		this.tilterPot = tilterPot;
+		tilter.setDirection(Relay.Direction.kBoth);
+	}
+	
+	public boolean straighten(){
+		return goToPosition(straight);
+	}
+	
+	public boolean goToPosition(double target){
+		double position = tilterPot.getVoltage();
+		if(isInRange(target,position)){
+			return true;
+		}else if(position < target){
+			this.forward();
+		}else if(position > target){
+			this.reverse();
+		}
+		return false;
+	}
+	
+	private boolean isInRange(double center,double current){
+		return center + centerTolerance > current && center - centerTolerance > current;
+	}
+	
+	public void move(Joystick controller){
+		SmartDashboard.putNumber("Tilter Value", tilterPot.getVoltage());
+		if(controller.getRawAxis(2) > 0.25) forward();
+		else if(controller.getRawAxis(3) > 0.2) reverse();
+		else off();
+	}
+	
+	public void on(){
+		tilter.set(Relay.Value.kOn);
+	}
+	
+	public void forward(){
+		//if(tilterPot.getVoltage() < forwardLim) TODO uncomment when added
+		tilter.set(Relay.Value.kForward);
+	}
+	
+	public void reverse(){
+		//if(tilterPot.getVoltage() > backwardLim)
+		tilter.set(Relay.Value.kReverse);
+	}
+	
+	public void off(){
+		tilter.set(Relay.Value.kOff);
+	}
+
+}

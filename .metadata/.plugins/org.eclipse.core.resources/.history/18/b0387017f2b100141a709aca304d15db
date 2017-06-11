@@ -1,0 +1,196 @@
+package com.first.fhsemit.recycle;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Timer;
+
+public class Hooks {
+
+	private final double leftUp = -0.2;//TODO cfg
+	private final double rightUp = -0.2;//TODO cfg
+	private final double leftDown = 0.4;//TODO cfg
+	private final double rightDown = 0.4;//TODO cfg
+	double sensitivity = 0.4;
+	boolean expo;
+	
+	private Talon leftMotor, rightMotor;
+	private DigitalInput positionHall, limitHall;
+	
+	private int state;
+	Timer timer;
+	
+	//-1 is up
+	//+1 is down
+	
+	public Hooks(int left, int right,DigitalInput positionHall,DigitalInput limitHall) {
+		leftMotor = new Talon(left);
+		rightMotor = new Talon(right);
+		this.positionHall = positionHall;
+		this.limitHall = limitHall;
+		timer = new Timer();
+		timer.start();
+	}
+	
+	
+	//for analog control
+	
+	public void move(double d){
+		if(!expo){
+			d *= -sensitivity;//inverts and slows
+		}else{
+			if(d>1){
+				d = -0.8*Math.pow(d, 2) + 0.2*d;
+			}else{
+				d = 0.8*Math.pow(d, 2) + 0.2*d;
+			}
+			
+		}
+		//if(d >= 0 || limitHall.get()){
+			leftMotor.set(d);//TODO cfg
+			rightMotor.set(d);//TODO cfg
+		//}
+	}
+	
+	
+	//autonomous
+	
+	
+	
+	/**
+	 * goes up to next magnet
+	 * @return if it has reached the next magnet
+	 */
+	public boolean upOne(){
+		switch(state){
+		case 0://determine if hooks are already at a magnet
+			timer.reset();
+    		if(!positionHall.get()){
+    			state++;
+    		}else{
+    			state += 2;
+    		}
+    		return false;
+    	case 1://clear the current magnet
+    		if(positionHall.get()){
+    			state++;
+    		}else{
+    			if(checkTime()) return true;
+    			if(goUp()) return true;
+    			
+    		}
+    		return false;
+    	case 2://go until next magnet
+    		if(!positionHall.get()){
+    			stop();
+    			return true;
+    		}else{
+    			if(checkTime()) return true;
+    			if(goUp())return true;
+    		}
+    		return false;
+    	default:
+    		System.out.println("hooks error");
+    		return false;
+		}
+	}
+
+	/**
+	 * goes down to next magnet
+	 * @return if it has reached the next magnet
+	 */
+	public boolean downOne(){
+		//System.out::println
+		switch(state){
+		case 0://determine if hooks are already at a magnet
+    		if(!positionHall.get()) state++;
+    		else state += 2;
+    		return false;
+    	case 1://clear the current magnet
+    		if(positionHall.get()) state++;
+    		else{
+    			if(checkTime()) return true;
+    			goDown();
+    		}
+    		return false;
+    	case 2://go until next magnet
+    		if(!positionHall.get()){
+    			stop();
+    			return true;
+    		}else {
+    			if(checkTime()) return true;
+    			goDown();
+    		}
+    		return false;
+    	default:
+    		System.out.println("hooks state error");
+    		return false;
+		}
+	}
+	
+	/**
+	 * goes to next magnet
+	 * @return if it has reached the next magnet
+	 * @deprecated
+	 */
+	public boolean moveOne(Runnable movement){
+		//System.out::println
+		switch(state){
+		case 0://determine if hooks are already at a magnet
+    		if(!positionHall.get()) state++;
+    		else state += 2;
+    		return false;
+    	case 1://clear the current magnet
+    		if(positionHall.get()) state++;
+    		else movement.run();
+    		return false;
+    	case 2://go until next magnet
+    		if(!positionHall.get()){
+    			stop();
+    			return true;
+    		}
+    		else movement.run();
+    		return false;
+    	default:
+    		System.out.println("hooks state error");
+    		return false;
+		}
+	}
+	
+	private boolean checkTime(){
+		if(timer.hasPeriodPassed(6)){
+			System.out.println("Hooks took too long");
+			stop();
+			return true;
+		}
+		return false;
+	}
+	
+	//for digital control
+	
+	/**
+	 * 
+	 * @return if the conveyer has reached the top
+	 */
+	public boolean goUp(){
+		if(limitHall.get()){
+			leftMotor.set(leftUp);
+			rightMotor.set(rightUp);
+			return false;
+		}else{
+			System.out.println("reached top");
+			stop();
+			return true;
+		}
+	}
+	
+	public void goDown(){
+		leftMotor.set(leftDown);
+		rightMotor.set(rightDown);
+	}
+	
+	public void stop(){
+		state = 0;
+		leftMotor.stopMotor();
+		rightMotor.stopMotor();
+	}
+}

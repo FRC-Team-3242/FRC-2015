@@ -1,0 +1,162 @@
+package com.first.fhsemit.recycle;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Timer;
+
+public class Hooks {
+
+	private final double leftUp = 0.5;//TODO cfg
+	private final double rightUp = 0.5;//TODO cfg
+	private final double leftDown = -0.8;//TODO cfg
+	private final double rightDown = -0.8;//TODO cfg
+	
+	private Talon leftMotor, rightMotor;
+	private DigitalInput hallEffect;
+	
+	private int state;
+	Timer timer;
+	
+	public Hooks(int left, int right,DigitalInput hallEffect) {
+		leftMotor = new Talon(left);
+		rightMotor = new Talon(right);
+		this.hallEffect = hallEffect;
+		timer = new Timer();
+		timer.start();
+	}
+	
+	
+	//for analog control
+	
+	public void move(double d){
+		leftMotor.set(d);//TODO cfg
+		rightMotor.set(d);//TODO cfg
+	}
+	
+	
+	//autonomous
+	
+	private boolean checkTime(){
+		if(timer.hasPeriodPassed(6)){
+			System.out.println("Hooks took too long");
+			stopMovement();
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * goes up to next magnet
+	 * @return if it has reached the next magnet
+	 */
+	public boolean upOne(){
+		switch(state){
+		case 0://determine if hooks are already at a magnet
+			timer.reset();
+    		if(!hallEffect.get()) state++;
+    		else state += 2;
+    		return false;
+    	case 1://clear the current magnet
+    		if(hallEffect.get()) state++;
+    		else{
+    			if(checkTime()) return true;
+    			goUp();
+    			
+    		}
+    		return false;
+    	case 2://go until next magnet
+    		if(!hallEffect.get()){
+    			stopMovement();
+    			return true;
+    		}
+    		else{
+    			if(checkTime()) return true;
+    			goUp();
+    		}
+    		return false;
+    	default:
+    		System.out.println("hooks error");
+    		return false;
+		}
+	}
+
+	/**
+	 * goes down to next magnet
+	 * @return if it has reached the next magnet
+	 */
+	public boolean downOne(){
+		//System.out::println
+		switch(state){
+		case 0://determine if hooks are already at a magnet
+    		if(!hallEffect.get()) state++;
+    		else state += 2;
+    		return false;
+    	case 1://clear the current magnet
+    		if(hallEffect.get()) state++;
+    		else{
+    			if(checkTime()) return true;
+    			goDown();
+    		}
+    		return false;
+    	case 2://go until next magnet
+    		if(!hallEffect.get()){
+    			stopMovement();
+    			return true;
+    		}else {
+    			if(checkTime()) return true;
+    			goDown();
+    		}
+    		return false;
+    	default:
+    		System.out.println("hooks state error");
+    		return false;
+		}
+	}
+	
+	/**
+	 * goes to next magnet
+	 * @return if it has reached the next magnet
+	 * @deprecated
+	 */
+	public boolean moveOne(Runnable movement){
+		//System.out::println
+		switch(state){
+		case 0://determine if hooks are already at a magnet
+    		if(!hallEffect.get()) state++;
+    		else state += 2;
+    		return false;
+    	case 1://clear the current magnet
+    		if(hallEffect.get()) state++;
+    		else goDown();
+    		return false;
+    	case 2://go until next magnet
+    		if(!hallEffect.get()){
+    			stopMovement();
+    			return true;
+    		}
+    		else goDown();
+    		return false;
+    	default:
+    		System.out.println("hooks state error");
+    		return false;
+		}
+	}
+	
+	//for digital control
+	
+	public void goUp(){
+		leftMotor.set(leftUp);
+		rightMotor.set(rightUp);
+	}
+	
+	public void goDown(){
+		leftMotor.set(leftDown);
+		rightMotor.set(rightDown);
+	}
+	
+	public void stopMovement(){
+		state = 0;
+		leftMotor.stopMotor();
+		rightMotor.stopMotor();
+	}
+}

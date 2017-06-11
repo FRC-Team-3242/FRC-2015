@@ -1,0 +1,24 @@
+package com.first.fhsemit.recycle;
+
+import edu.wpi.first.wpilibj.Gyro;
+import edu.wpi.first.wpilibj.Talon;
+
+public class Tilter {
+
+	Talon tilter;
+	Gyro tilterGyro;
+	
+	public Tilter(Talon tilter, int gyroPort) {
+		this.tilter = tilter;
+		tilterGyro = new Gyro(gyroPort);
+	}
+	
+	public void goToCenter(){
+		
+	}
+	
+	public void move(){
+		
+	}
+
+}

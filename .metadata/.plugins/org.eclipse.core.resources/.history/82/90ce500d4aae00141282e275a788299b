@@ -1,0 +1,14 @@
+package com.first.fhsemit.recycle;
+
+import edu.wpi.first.wpilibj.Talon;
+
+public class Tilter {
+
+	Talon tilter;
+	Gyro tilterGyro;
+	
+	public Tilter() {
+		
+	}
+
+}

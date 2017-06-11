@@ -1,0 +1,41 @@
+package com.first.fhsemit.recycle;
+
+import edu.wpi.first.wpilibj.Gyro;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Talon;
+
+public class Tilter {
+
+	Relay tilter;
+	Gyro tilterGyro;
+	
+	public Tilter(Talon tilter, int gyroPort) {
+		this.tilter = tilter;
+		tilterGyro = new Gyro(gyroPort);
+	}
+	
+	public boolean goToCenter(){
+		
+		return false;
+	}
+	
+	public void move(Double d){
+		if(d > 0.25) tilter.set(Relay.Value.kReverse);
+		else if(d > 0.25) tilter.set(Relay.Value.kForward);
+		else tilter.set(Relay.Value.kOff);
+	}
+	
+	public void forward(){
+		tilter.set(Relay.Value.kForward);
+	}
+	
+	public void reverse(){
+		tilter.set(Relay.Value.kReverse);
+	}
+	
+	public void off(){
+		tilter.set(Relay.Value.kOff);
+	}
+
+}

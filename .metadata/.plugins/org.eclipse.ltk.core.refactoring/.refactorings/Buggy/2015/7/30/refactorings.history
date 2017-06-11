@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename package &apos;org.usfirst.frc.team3242.robot&apos; to &apos;com.fhsemit.first.saventi.buggy&apos;&#x0D;&#x0A;- Original project: &apos;Buggy&apos;&#x0D;&#x0A;- Original element: &apos;Buggy/src/org.usfirst.frc.team3242.robot&apos;&#x0D;&#x0A;- Renamed element: &apos;Buggy/src/com.fhsemit.first.saventi.buggy&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename package &apos;org.usfirst.frc.team3242.robot&apos;" flags="589830" hierarchical="false" id="org.eclipse.jdt.ui.rename.package" input="/src&lt;org.usfirst.frc.team3242.robot" name="com.fhsemit.first.saventi.buggy" qualified="false" references="true" stamp="1437404414243" textual="false" version="1.0"/>
+</session>

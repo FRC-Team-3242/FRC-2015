@@ -1,0 +1,32 @@
+package com.first.fhsemit.recycle;
+
+import edu.wpi.first.wpilibj.Talon;
+
+public class Hooks {
+
+	private final float leftUp = 1;
+	private final float rightUp = 1;
+	private final float leftDown = -1;
+	private final float rightDown = -1;
+	
+	private Talon leftMotor, rightMotor;
+	public Hooks(int left, int right) {
+		leftMotor = new Talon(left);
+		rightMotor = new Talon(right);
+	}
+	
+	public void goUp(){
+		leftMotor.set(leftUp);
+		rightMotor.set(rightUp);
+	}
+	
+	public void goDown(){
+		leftMotor.set(leftDown);
+		rightMotor.set(rightDown);
+	}
+	
+	public void clearMovement(){
+		leftMotor.set(0);
+		rightMotor.set(0);
+	}
+}

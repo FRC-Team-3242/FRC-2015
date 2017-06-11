@@ -1,0 +1,44 @@
+package com.first.fhsemit.recycle;
+
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Relay;
+
+public class Tilter {
+
+	final double forwardLim = 5;
+	final double backwardLim = 5;
+	final double straight = 5;
+	
+	Relay tilter;
+	AnalogInput tilterPot;
+	
+	public Tilter(Relay tilter, int gyroPort) {
+		this.tilter = tilter;
+		tilterPot = new AnalogInput(gyroPort);
+	}
+	
+	public boolean goToCenter(){
+		
+		return false;
+	}
+	
+	public void move(Double d){
+		if(d > 0.25) reverse();
+		else if(d > 0.25) forward();
+		else off();
+	}
+	
+	public void forward(){
+		if(tilterPot.getVoltage() > forwardLim)
+		tilter.set(Relay.Value.kForward);
+	}
+	
+	public void reverse(){
+		tilter.set(Relay.Value.kReverse);
+	}
+	
+	public void off(){
+		tilter.set(Relay.Value.kOff);
+	}
+
+}

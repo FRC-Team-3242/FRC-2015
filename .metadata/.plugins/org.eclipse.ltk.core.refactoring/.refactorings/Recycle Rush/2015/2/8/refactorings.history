@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename method &apos;com.first.fhsemit.recycle.Hooks.atMagnet()&apos; to &apos;atPositionMagnet&apos;&#x0D;&#x0A;- Original project: &apos;Recycle Rush&apos;&#x0D;&#x0A;- Original element: &apos;com.first.fhsemit.recycle.Hooks.atMagnet()&apos;&#x0D;&#x0A;- Renamed element: &apos;com.first.fhsemit.recycle.Hooks.atPositionMagnet()&apos;&#x0D;&#x0A;- Update references to refactored element" delegate="false" deprecate="false" description="Rename method &apos;atMagnet&apos;" flags="589826" id="org.eclipse.jdt.ui.rename.method" input="/src&lt;com.first.fhsemit.recycle{Hooks.java[Hooks~atMagnet" name="atPositionMagnet" references="true" stamp="1424211946948" version="1.0"/>
+</session>
