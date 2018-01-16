@@ -2,7 +2,7 @@
 package com.first.fhsemit.recycle;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.CANTalon;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Gyro;
 import edu.wpi.first.wpilibj.I2C;
@@ -55,10 +55,10 @@ public class Robot extends IterativeRobot {
     	//negative is forward, and positive is backwards for Y
     	//positive is clockwise and negative is counterclockwise for turning
     	//drive motors are backwards
-    	CANTalon frontLeft = new CANTalon(4);
-    	CANTalon backLeft = new CANTalon(3);
-    	CANTalon backRight = new CANTalon(2);
-    	CANTalon frontRight = new CANTalon(1);
+    	WPI_TalonSRX frontLeft = new WPI_TalonSRX(4);
+    	WPI_TalonSRX backLeft = new WPI_TalonSRX(3);
+    	WPI_TalonSRX backRight = new WPI_TalonSRX(2);
+    	WPI_TalonSRX frontRight = new WPI_TalonSRX(1);
     	drive = new RobotDrive(frontLeft, backLeft, frontRight, backRight);
     	drive.setInvertedMotor(MotorType.kFrontLeft, true);
     	drive.setInvertedMotor(MotorType.kRearLeft, true);

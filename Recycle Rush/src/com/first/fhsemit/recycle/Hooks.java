@@ -2,11 +2,12 @@ package com.first.fhsemit.recycle;
 
 import java.util.function.Predicate;
 
-import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.CANTalon.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 public class Hooks {
 
@@ -18,7 +19,7 @@ public class Hooks {
 	boolean expo;
 	
 	//private Talon leftMotor, rightMotor;
-	private CANTalon leftMotor,rightMotor;
+	private WPI_TalonSRX leftMotor,rightMotor;
 	private DigitalInput positionHall, binPositionHall, limitHall, stopperHall;
 	
 	int numberToMove;
@@ -31,11 +32,9 @@ public class Hooks {
 	public Hooks(int left, int right,DigitalInput positionHall,DigitalInput binPositionHall, DigitalInput stopperHall) {
 		//leftMotor = new Talon(left);
 		//rightMotor = new Talon(right);
-		leftMotor = new CANTalon(left);
-		rightMotor = new CANTalon(right);
+		leftMotor = new WPI_TalonSRX(left);
+		rightMotor = new WPI_TalonSRX(right);
 		brake(true);
-		leftMotor.changeControlMode(ControlMode.PercentVbus);// TODO check if this is what is inverting the moveByOne
-		rightMotor.changeControlMode(ControlMode.PercentVbus);
 		this.positionHall = positionHall;
 		this.binPositionHall = binPositionHall;
 		this.stopperHall = stopperHall;
@@ -64,8 +63,8 @@ public class Hooks {
 			
 		}
 		//if(-d >= 0 || limitHall.get()){
-			leftMotor.set(-d);
-			rightMotor.set(-d);
+			leftMotor.set(ControlMode.PercentOutput, -d);
+			rightMotor.set(ControlMode.PercentOutput, -d);
 		//}
 		SmartDashboard.putNumber("Hook speed", -d); //TODO uncomment
 		SmartDashboard.putBoolean("Hook Magnet", atPositionMagnet());
@@ -257,8 +256,14 @@ public class Hooks {
 	//for digital control
 	
 	public void brake(boolean isEnabled){
-		leftMotor.enableBrakeMode(isEnabled);
-		rightMotor.enableBrakeMode(isEnabled);
+		if(isEnabled){
+			leftMotor.setNeutralMode(NeutralMode.Brake);
+			rightMotor.setNeutralMode(NeutralMode.Brake);
+		}
+		else{
+			leftMotor.setNeutralMode(NeutralMode.Coast);
+			rightMotor.setNeutralMode(NeutralMode.Coast);
+		}
 	}
 	
 	/**
@@ -271,8 +276,8 @@ public class Hooks {
 		if(speed >= maxUp) speed = maxUp;
 		
 		
-			leftMotor.set(speed);
-			rightMotor.set(speed);
+			leftMotor.set(ControlMode.PercentOutput, speed);
+			rightMotor.set(ControlMode.PercentOutput, speed);
 			return false;
 		//}else{
 		//	System.out.println("reached top");
@@ -286,8 +291,8 @@ public class Hooks {
 		speed = speed*safetyTimer.get()+0.05;
 		//if(speed >= maxUp) speed = maxUp;
 		//if(limitHall.get()){
-			leftMotor.set(speed);
-			rightMotor.set(speed);
+			leftMotor.set(ControlMode.PercentOutput, speed);
+			rightMotor.set(ControlMode.PercentOutput, speed);
 			return false;
 		//}else{
 		//	System.out.println("reached top");
@@ -302,20 +307,20 @@ public class Hooks {
 		double speed = downSpeed;//*safetyTimer.get()+0.085;
 		//if(speed >= maxDown) speed = maxDown;
 		
-		leftMotor.set(speed);
-		rightMotor.set(speed);
+		leftMotor.set(ControlMode.PercentOutput, speed);
+		rightMotor.set(ControlMode.PercentOutput, speed);
 		return false;
 	}
 	
 	public boolean goDown(double speed){
-		leftMotor.set(-speed);
-		rightMotor.set(-speed);
+		leftMotor.set(ControlMode.PercentOutput, -speed);
+		rightMotor.set(ControlMode.PercentOutput, -speed);
 		return false;
 	}
 	
 	public void stop(){
 		state = 0;
-		leftMotor.set(0);
-		rightMotor.set(0);
+		leftMotor.set(ControlMode.PercentOutput, 0);
+		rightMotor.set(ControlMode.PercentOutput, 0);
 	}
 }
