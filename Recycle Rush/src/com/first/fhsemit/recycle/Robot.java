@@ -4,14 +4,13 @@ package com.first.fhsemit.recycle;
 import edu.wpi.first.wpilibj.AnalogInput;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Gyro;
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.RobotDrive.MotorType;
+import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -37,7 +36,7 @@ public class Robot extends IterativeRobot {
 	int autonomousMode;
 	
 	Joystick controller;
-	RobotDrive drive;
+	MecanumDrive drive;
 	Hooks hooks;
 	Tilter tilter;
 	//DigitalInput ramButton;
@@ -47,7 +46,7 @@ public class Robot extends IterativeRobot {
 	int turnState;
 	TeleopDrive teleopDrive;
 	Timer autonomousTimer;
-	Gyro baseGyro;
+	AnalogGyro baseGyro;
 	
     public void robotInit() {
     	controller = new Joystick(1);
@@ -59,9 +58,7 @@ public class Robot extends IterativeRobot {
     	WPI_TalonSRX backLeft = new WPI_TalonSRX(3);
     	WPI_TalonSRX backRight = new WPI_TalonSRX(2);
     	WPI_TalonSRX frontRight = new WPI_TalonSRX(1);
-    	drive = new RobotDrive(frontLeft, backLeft, frontRight, backRight);
-    	drive.setInvertedMotor(MotorType.kFrontLeft, true);
-    	drive.setInvertedMotor(MotorType.kRearLeft, true);
+    	drive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
     	//frontLeft.setP(1.2);
     	teleopDrive = new TeleopDrive(drive);
     	
@@ -71,7 +68,7 @@ public class Robot extends IterativeRobot {
     	
     	//rangeFinder = new RangeFinder(new AnalogInput(1));
     	
-    	baseGyro = new Gyro(0); 
+    	baseGyro = new AnalogGyro(0); 
     	baseGyro.setSensitivity(0.007);
     	baseGyro.initGyro();
     	autonomousTimer = new Timer();
@@ -104,7 +101,6 @@ public class Robot extends IterativeRobot {
     	teleopDrive.slowStrafeSpeed = pref.getDouble("SlowStrafeSpeed",0.125);
     	teleopDrive.turnSpeed = pref.getDouble("TurnSpeed",-0.8);//0.25;
     	teleopDrive.forwardSpeed = pref.getDouble("ForwardSpeed",-1);//0.4;
-    	pref.save();
     }
 
     
@@ -185,7 +181,7 @@ public class Robot extends IterativeRobot {
     	switch(autonomousState){
 		/*case 0://move to first object
 			if(!autonomousTimer.hasPeriodPassed(0.1)){
-				drive.mecanumDrive_Cartesian(0, 0.25F, 0, 0);//TODO cfg
+				drive.driveCartesian(0, 0.25F, 0, 0);//TODO cfg
 			}else{
 				autonomousState++;
 				drive.stopMotor();
@@ -234,7 +230,7 @@ public class Robot extends IterativeRobot {
 		case 2://move to second object
 			//if(!rangeFinder.isInRange()){
 			if(!autonomousTimer.hasPeriodPassed(2)){//1.4
-				drive.mecanumDrive_Cartesian(0, 0.16F, 0, 0);//0.185 - 0.17
+				drive.driveCartesian(0, 0.16F, 0, 0);//0.185 - 0.17
 			}else{
 				autonomousState=10;
 				drive.stopMotor();
@@ -242,7 +238,7 @@ public class Robot extends IterativeRobot {
 			break;
 		case 15://Strafe to second object
 			if(!autonomousTimer.hasPeriodPassed(1.63)){//1.4
-				drive.mecanumDrive_Cartesian(0.5, 0.02, 0.02, 0);
+				drive.driveCartesian(0.5, 0.02, 0.02, 0);
 			}else{
 
 				if(autonomousMode == 0)
@@ -272,7 +268,7 @@ public class Robot extends IterativeRobot {
 			break;
 		case 14://move forward to second object
 			if(!autonomousTimer.hasPeriodPassed(1.4)){//1.4
-				drive.mecanumDrive_Cartesian(0, 0.19F, 0, 0);//0.16
+				drive.driveCartesian(0, 0.19F, 0, 0);//0.16
 			}else{
 				autonomousState=12;
 				drive.stopMotor();
@@ -300,14 +296,14 @@ public class Robot extends IterativeRobot {
 			break;
 		case 4://turn left towards autozone
 			if(!autonomousTimer.hasPeriodPassed(1.57)){
-				drive.mecanumDrive_Cartesian(0, 0, 0.37 - autonomousTimer.get()*0.05, 0);//TODO cfg
+				drive.driveCartesian(0, 0, 0.37 - autonomousTimer.get()*0.05, 0);//TODO cfg
 				//if(autonomousTimer.get()<0.3){
 				//	tilter.reverse();
 				//}else{
 				//	tilter.off();
 				//}
 			}else{
-				drive.mecanumDrive_Cartesian(0, 0, -0.003, 0);//stop
+				drive.driveCartesian(0, 0, -0.003, 0);//stop
 				if(autonomousMode == 1 || autonomousMode == 2 || autonomousMode == 3){
 					autonomousState = 6;
 				}else if(autonomousMode == 0){
@@ -317,7 +313,7 @@ public class Robot extends IterativeRobot {
 			break;
 		case 5://move to autoZone
 			if(!autonomousTimer.hasPeriodPassed(1.4)){//TODO cfg
-				drive.mecanumDrive_Cartesian(0, 0.575, 0, 0);//TODO cfg
+				drive.driveCartesian(0, 0.575, 0, 0);//TODO cfg
 			}else{
 				autonomousState=6;
 				drive.stopMotor();
@@ -325,7 +321,7 @@ public class Robot extends IterativeRobot {
 			break;
 		case 16://back up to autozone
 			if(!autonomousTimer.hasPeriodPassed(1.25)){//TODO 1.4
-				drive.mecanumDrive_Cartesian(0, -0.575, 0, 0);//TODO cfg
+				drive.driveCartesian(0, -0.575, 0, 0);//TODO cfg
 			}else{
 				if(turnState == 0){
 					autonomousState=6;
@@ -339,7 +335,7 @@ public class Robot extends IterativeRobot {
 			break;
 		case 18://back up further to autozone
 			if(!autonomousTimer.hasPeriodPassed(1.72)){//TODO 1.4
-				drive.mecanumDrive_Cartesian(0, -0.575, 0, 0);//TODO cfg
+				drive.driveCartesian(0, -0.575, 0, 0);//TODO cfg
 			}else{
 				autonomousState=6;
 				drive.stopMotor();
@@ -347,14 +343,14 @@ public class Robot extends IterativeRobot {
 			break;
 		case 19://turn right towards autozone
 			if(!autonomousTimer.hasPeriodPassed(1.57)){
-				drive.mecanumDrive_Cartesian(0, 0, -0.37 + autonomousTimer.get()*0.05, 0);//TODO cfg
+				drive.driveCartesian(0, 0, -0.37 + autonomousTimer.get()*0.05, 0);//TODO cfg
 				//if(autonomousTimer.get()<0.3){
 				//	tilter.reverse();
 				//}else{
 				//	tilter.off();
 				//}
 			}else{
-				drive.mecanumDrive_Cartesian(0, 0, -0.003, 0);//stop
+				drive.driveCartesian(0, 0, -0.003, 0);//stop
 				if(autonomousMode == 1 || autonomousMode == 2 || autonomousMode == 3){
 					autonomousState = 6;
 				}else if(autonomousMode == 0){
@@ -372,7 +368,7 @@ public class Robot extends IterativeRobot {
 			break;
 		case 7://move away from crate and can
 			if(!autonomousTimer.hasPeriodPassed(0.6)){//TODO 0.6
-				drive.mecanumDrive_Cartesian(0, -0.2, 0, 0);//TODO cfg
+				drive.driveCartesian(0, -0.2, 0, 0);//TODO cfg
 			}else{
 				autonomousState = -1;
 				drive.stopMotor();
@@ -388,7 +384,7 @@ public class Robot extends IterativeRobot {
     	switch(autonomousState){
 		/*case 0://move to first object
 			if(!autonomousTimer.hasPeriodPassed(0.1)){
-				drive.mecanumDrive_Cartesian(0, 0.25F, 0, 0);
+				drive.driveCartesian(0, 0.25F, 0, 0);
 			}else{
 				autonomousState++;
 				drive.stopMotor();
@@ -436,7 +432,7 @@ public class Robot extends IterativeRobot {
 		case 2://move to second object
 			//if(!rangeFinder.isInRange()){
 			if(!autonomousTimer.hasPeriodPassed(2)){//1.4
-				drive.mecanumDrive_Cartesian(0, 0.16F, 0, 0);//0.185 - 0.17
+				drive.driveCartesian(0, 0.16F, 0, 0);//0.185 - 0.17
 			}else{
 				autonomousState=10;
 				drive.stopMotor();
@@ -444,7 +440,7 @@ public class Robot extends IterativeRobot {
 			break;
 		case 15://Strafe to second object TODO increase
 			if(!autonomousTimer.hasPeriodPassed(1.3)){//1.4 1.9 1.8 1.63 1.47
-				drive.mecanumDrive_Cartesian(0.5, 0.02, 0.035, 0);//0.5 0.04
+				drive.driveCartesian(0.5, 0.02, 0.035, 0);//0.5 0.04
 			}else{
 
 				if(autonomousMode == 0)
@@ -474,7 +470,7 @@ public class Robot extends IterativeRobot {
 			break;
 		case 14://move forward to second object TODO increase
 			if(!autonomousTimer.hasPeriodPassed(1.4)){//1.4
-				drive.mecanumDrive_Cartesian(0, 0.19F, 0, 0);//0.16
+				drive.driveCartesian(0, 0.19F, 0, 0);//0.16
 			}else{
 				autonomousState=12;
 				drive.stopMotor();
@@ -508,14 +504,14 @@ public class Robot extends IterativeRobot {
 			break;
 		case 4://turn left towards autozone
 			if(!autonomousTimer.hasPeriodPassed(1.57)){
-				drive.mecanumDrive_Cartesian(0, 0, 0.37 - autonomousTimer.get()*0.05, 0);//TODO cfg
+				drive.driveCartesian(0, 0, 0.37 - autonomousTimer.get()*0.05, 0);//TODO cfg
 				//if(autonomousTimer.get()<0.3){
 				//	tilter.reverse();
 				//}else{
 				//	tilter.off();
 				//}
 			}else{
-				drive.mecanumDrive_Cartesian(0, 0, -0.003, 0);//stop
+				drive.driveCartesian(0, 0, -0.003, 0);//stop
 				if(autonomousMode == 1 || autonomousMode == 2){
 					autonomousState = 6;
 				}else if(autonomousMode == 0){
@@ -525,7 +521,7 @@ public class Robot extends IterativeRobot {
 			break;
 		case 5://move to autoZone
 			if(!autonomousTimer.hasPeriodPassed(1.4)){//TODO cfg
-				drive.mecanumDrive_Cartesian(0, 0.575, 0, 0);//TODO cfg
+				drive.driveCartesian(0, 0.575, 0, 0);//TODO cfg
 			}else{
 				autonomousState=6;
 				drive.stopMotor();
@@ -533,7 +529,7 @@ public class Robot extends IterativeRobot {
 			break;
 		case 16://back up to autozone
 			if(!autonomousTimer.hasPeriodPassed(1.35)){//TODO 1.4 1.25
-				drive.mecanumDrive_Cartesian(0, -0.575, 0, 0);//TODO cfg
+				drive.driveCartesian(0, -0.575, 0, 0);//TODO cfg
 			}else{
 				if(turnState == 0){
 					autonomousState=6;
@@ -547,7 +543,7 @@ public class Robot extends IterativeRobot {
 			break;
 		case 18://back up further to autozone
 			if(!autonomousTimer.hasPeriodPassed(1.72)){//TODO 1.4
-				drive.mecanumDrive_Cartesian(0, -0.575, 0, 0);//TODO cfg
+				drive.driveCartesian(0, -0.575, 0, 0);//TODO cfg
 			}else{
 				autonomousState=6;
 				drive.stopMotor();
@@ -555,14 +551,14 @@ public class Robot extends IterativeRobot {
 			break;
 		case 19://turn right towards autozone
 			if(!autonomousTimer.hasPeriodPassed(1.57)){
-				drive.mecanumDrive_Cartesian(0, 0, -0.37 + autonomousTimer.get()*0.05, 0);//TODO cfg
+				drive.driveCartesian(0, 0, -0.37 + autonomousTimer.get()*0.05, 0);//TODO cfg
 				//if(autonomousTimer.get()<0.3){
 				//	tilter.reverse();
 				//}else{
 				//	tilter.off();
 				//}
 			}else{
-				drive.mecanumDrive_Cartesian(0, 0, -0.003, 0);//stop
+				drive.driveCartesian(0, 0, -0.003, 0);//stop
 				if(autonomousMode == 1 || autonomousMode == 2){
 					autonomousState = 6;
 				}else if(autonomousMode == 0){
@@ -584,7 +580,7 @@ public class Robot extends IterativeRobot {
 			break;
 		case 7://move away from crate and can
 			if(!autonomousTimer.hasPeriodPassed(0.6)){//TODO 0.6
-				drive.mecanumDrive_Cartesian(0, -0.2, 0, 0);//TODO cfg
+				drive.driveCartesian(0, -0.2, 0, 0);//TODO cfg
 			}else{
 				autonomousState = -1;
 				drive.stopMotor();

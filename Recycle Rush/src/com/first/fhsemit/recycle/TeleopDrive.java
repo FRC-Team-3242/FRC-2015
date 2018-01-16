@@ -3,6 +3,7 @@ package com.first.fhsemit.recycle;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.drive.MecanumDrive;
 
 public class TeleopDrive {
 
@@ -14,12 +15,12 @@ public class TeleopDrive {
 	double turnSpeed;
 	double forwardSpeed;
 	
-	RobotDrive drive;
+	MecanumDrive drive;
 	
-	public TeleopDrive(RobotDrive drive) {
+	public TeleopDrive(MecanumDrive drive2) {
 		strafeTimer = new Timer();
 		strafeTimer.start();
-		this.drive = drive;
+		this.drive = drive2;
 		isStrafing = false;
 	}
 	
@@ -42,7 +43,7 @@ public class TeleopDrive {
     	if(controller.getRawButton(3)) strafe += getStrafeSpeed();//move right
     	if(controller.getRawButton(2)) strafe -= getStrafeSpeed();//move left
     	
-    	drive.mecanumDrive_Cartesian(strafe, analogY, analogX, 0);//TODO cfg
+    	drive.driveCartesian(strafe, analogY, analogX, 0);//TODO cfg
     }
 	
 	private double getStrafeSpeed(){
