@@ -25,7 +25,7 @@ public class TeleopDrive {
 	}
 	
 	public void drive(Joystick controller){
-    	double analogX = turnSpeed*filteredAxis(controller.getRawAxis(0));
+    	double analogX = -turnSpeed*filteredAxis(controller.getRawAxis(0));
     	double analogY = forwardSpeed*filteredAxis(controller.getRawAxis(1));
     	
     	if(isStrafing){
@@ -40,8 +40,8 @@ public class TeleopDrive {
     	}
     	
     	double strafe = 0;
-    	if(controller.getRawButton(3)) strafe += getStrafeSpeed();//move right
-    	if(controller.getRawButton(2)) strafe -= getStrafeSpeed();//move left
+    	if(controller.getRawButton(2)) strafe += getStrafeSpeed();//move right
+    	if(controller.getRawButton(3)) strafe -= getStrafeSpeed();//move left
     	
     	drive.driveCartesian(strafe, analogY, analogX, 0);//TODO cfg
     }
